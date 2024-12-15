@@ -1,0 +1,22 @@
+---
+# tasks file for roles/nginx-deploy-role
+- name: Install nginx
+  ansible.builtin.apt:
+      name: nginx
+      state: present # do not update the package if it is already there. 'latest' will update the package even if it is there.
+      update_cache: yes
+
+- name: Deploy nginx config template
+  ansible.builtin.template:
+      src: nginx.conf.j2
+      dest: /etc/nginx/sites-available/default
+      mode: '0644'
+      owner: root
+      group: root
+  notify: Restart nginx
+
+- name: Start and enable nginx
+  ansible.builtin.service:
+      name: nginx
+      state: started
+      enabled: true
